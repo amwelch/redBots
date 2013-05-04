@@ -11,19 +11,21 @@ MINCOMMENTSCORE= 0
 subReddit= 'test'
 
 #description of bot
-user_agent= 'Calculate the popularity of teams/players based on occurances in comments by /u/amwelch'
+user_agent= 'Calculate the popularity of teams/players based on occurances in comments by /u/amwelch (Testing phase)'
 
 def main():
   r= init()
   subRed= r.get_subreddit(subReddit)
-  commentTree= subRed.get_comments(subRed)
-  commentList= praw.helpers.flatten_tree(commentTree)
+  commentList= subRed.get_comments()
+  #commentTree= subRed.get_comments(subRed)
+  #commentList= praw.helpers.flatten_tree(commentTree)
 
   for c in commentList:
+    print "Body:\t%s" %(c.body)
     if c.score < MINCOMMENTSCORE:
       continue
-    for word in commentList.body:
-      word= word.lowercase()
+    for word in c.body.split():
+      word= str(word).lower()
       if word in newCount.keys():
         newCount[word] += 1
       else:
@@ -34,7 +36,7 @@ def main():
     words= {}
 
   for w in newCount.keys():
-    print w
+    print "Word:\t%s" % (w)
     if newCount[w] >= THRESH:
       try:
         words[w]['count'] += newCount[w] 
